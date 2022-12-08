@@ -7,10 +7,8 @@ public class day7_1 {
 	String [] currLine;
 	int sol = 0;
 
-	System.out.println("PLEASE");
 	System.out.flush();
 	try {
-	    System.out.println("Start");
 	    Scanner in = new Scanner (new File("../input/day7_1.txt"));
 
 	    while (in.hasNextLine()) {
@@ -39,8 +37,8 @@ public class day7_1 {
 
 	    while (curr.getParent() != null) curr = curr.getParent();
 	    calcSize(curr);
-	    System.out.println(calcTotalSize(curr));
-	    
+	    System.out.println("Part 1: " + calcTotalSize(curr));
+	    System.out.println("Part 2: " + delete(curr, curr, Integer.MAX_VALUE));
 	} catch (FileNotFoundException fnfe) {
 	    System.out.println(fnfe);
 	} 
@@ -48,10 +46,8 @@ public class day7_1 {
 
     public static int calcSize(Node root) {
 	
-	int total = 0;
-	if (root.isLeaf()) {
-	    total = root.getSize();
-	} else {
+	int total = root.getSize();;
+	if (!root.isLeaf()) {
 	    for (String subdir : root.getSubDirs().keySet()) {
 		total += calcSize(root.getSubDir(subdir));
 	    } //for
@@ -60,6 +56,19 @@ public class day7_1 {
 	root.setSize(total);
 	return total;
     } //calcSize
+
+    
+    public static int delete(Node curr, Node root, int min) {
+	if (curr.getSize() >= (30000000 - (70000000 - root.getSize())) && curr.getSize() < min) min = curr.getSize();
+	if (!curr.isLeaf()) {
+	    for (String subdir : curr.getSubDirs().keySet()) {
+		min = delete(curr.getSubDir(subdir), root, min);
+	    } //for
+	} //if
+	
+	return min;
+    } //calcSize
+
     
     public static int calcTotalSize(Node root) {
 	int total = 0;
@@ -68,7 +77,7 @@ public class day7_1 {
 	} else {
 	    total += root.getSize() <= 100000 ? root.getSize() : 0;
 	    for (String subdir : root.getSubDirs().keySet()) {
-		total += calcSize(root.getSubDir(subdir));
+		total += calcTotalSize(root.getSubDir(subdir));
 	    } //for
 	} //if
 
